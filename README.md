@@ -54,3 +54,7 @@ python -m venv venv
 
 # 3. Install core dependencies
 pip install "numpy>=2.0.0" scipy matplotlib
+
+### 🛠️ Pipeline Architecture & Execution
+
+FlowThe core orchestrator script biasnfw.py triggers the complete numerical pipeline via executar_pipeline_completo() across six automated stages:Calibration: Maps the spectral bias $\epsilon(r,c)$ using systematic random sub-voxel grid-phase translations.Corrector Interpolation: Initializes the 2D PCHIP spectral transfer function matrix.Validation & Auditing: Performs blind cross-validation ($N=64$ vs $N=128$), Hernquist transferability testing, sub-voxel convergence sweeps ($M_{\text{sub}}$), box-size sensitivity, and CPU scaling audits.Monte Carlo Population: Generates a physical population of 169 halos to evaluate classification thresholds.Observational Inference: Fits galaxy occupation fraction ($f_{\text{occ}}$) sigmoids comparing analytical, uncorrected, and corrected states.
