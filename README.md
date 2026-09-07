@@ -1,21 +1,5 @@
 # Correcting Numerical Central Cusp Bias in NFW Dark Matter Halos
 
-<!-- PROFESSIONAL BADGES -->
-<p align="left">
-  <a href="https://github.com/vetorio/Biasnfw/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/vetorio/Biasnfw?style=for-the-badge&color=00cc99" alt="License">
-  </a>
-  <a href="https://colab.research.google.com/drive/SEU_LINK_DO_COLAB_AQUI" target="_blank">
-    <img src="https://img.shields.io/badge/Open%20in%20Colab-F9AB00?style=for-the-badge&logo=googlecolab&logoColor=white" alt="Google Colab">
-  </a>
-  <a href="https://github.com/vetorio/Biasnfw/raw/main/docs/poster_epsbf.pdf" target="_blank">
-    <img src="https://img.shields.io/badge/Download%20Poster-003366?style=for-the-badge&logo=adobe-acrobat-reader&logoColor=white" alt="Download PDF Poster">
-  </a>
-  <a href="https://github.com/vetorio/Biasnfw/raw/main/docs/artigo_nfw.pdf" target="_blank">
-    <img src="https://img.shields.io/badge/Download%20Paper-0073e6?style=for-the-badge&logo=read-the-docs&logoColor=white" alt="Download PDF Paper">
-  </a>
-</p>
-
 This repository hosts the complete computational pipeline, datasets, and high-resolution diagnostic figures for correcting the systematic central potential smoothing in Navarro-Frenk-White (NFW) dark matter mini-halos ($M \le 10^8 M_\odot$) caused by Cloud-in-Cell (CIC) density deposition on discrete Cartesian grids solved via Fast Fourier Transform (FFT) Poisson solvers [3, 4].
 
 ---
