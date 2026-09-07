@@ -24,6 +24,68 @@ Our study develops a **2D spectral transfer function** binned in radius and conc
 
 This project is built with python code engineered for full reproducibility. All physical and numerical parameters are fixed via a seed mechanism.
 
+Installation & Setup Guide
+
+This project requires Python 3.8+. All external dependencies are standard scientific computing packages available via pip.
+Prerequisites
+
+The following modules used in this project belong to Python's Standard Library and do not require installation:
+
+    sys, io, os, gc, csv, time, pathlib, warnings, datetime
+
+Required Dependencies
+
+The core external packages required are:
+
+    NumPy (numpy) - For numerical array operations.
+
+    Matplotlib (matplotlib) - For 2D plotting, subplots, and colorbar normalization.
+
+    SciPy (scipy) - For interpolation (PchipInterpolator) and non-linear curve fitting (curve_fit).
+
+Quick Start
+
+1. Clone the repository:
+Bash
+
+git clone https://github.com/your-username/your-repository-name.git
+cd your-repository-name
+
+2. Create and activate a virtual environment (Recommended):
+
+    Linux / macOS:
+    Bash
+
+    python3 -m venv venv
+    source venv/bin/activate
+
+    Windows (PowerShell / Command Prompt):
+    DOS
+
+    python -m venv venv
+    venv\Scripts\activate
+
+3. Install required packages:
+
+Direct installation:
+Bash
+
+pip install numpy matplotlib scipy
+
+Alternatively, if using a requirements.txt file:
+Bash
+
+pip install -r requirements.txt
+
+requirements.txt File
+
+Add the following block to a requirements.txt file in your repository root directory:
+Plaintext
+
+numpy>=1.20.0
+matplotlib>=3.4.0
+scipy>=1.7.0
+
 ### 1. Requirements & Dependencies
 The pipeline was developed and verified under **Python 3.12+** (tested up to **3.13.0**) on Linux architectures [2, 8]. It relies on standard scientific libraries:
 * `numpy >= 2.0.0`
