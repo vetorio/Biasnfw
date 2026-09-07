@@ -1,153 +1,61 @@
-# NFW Mini-Halo Bias Correction Pipeline — Gold Standard (v6)
+# Correcting Numerical Central Cusp Bias in NFW Dark Matter Halos
 
-Pipeline científico para correção do viés numérico em simulações cosmológicas de mini-halos de matéria escura com perfil NFW/Hernquist, utilizando correção via PCHIP 2D e validação contra o critério de Nadler (2025).
+<!-- PROFESSIONAL BADGES -->
+<p align="left">
+  <a href="https://github.com/vetorio/Biasnfw/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/vetorio/Biasnfw?style=for-the-badge&color=00cc99" alt="License">
+  </a>
+  <a href="https://colab.research.google.com/drive/SEU_LINK_DO_COLAB_AQUI" target="_blank">
+    <img src="https://img.shields.io/badge/Open%20in%20Colab-F9AB00?style=for-the-badge&logo=googlecolab&logoColor=white" alt="Google Colab">
+  </a>
+  <a href="https://github.com/vetorio/Biasnfw/raw/main/docs/poster_epsbf.pdf" target="_blank">
+    <img src="https://img.shields.io/badge/Download%20Poster-003366?style=for-the-badge&logo=adobe-acrobat-reader&logoColor=white" alt="Download PDF Poster">
+  </a>
+  <a href="https://github.com/vetorio/Biasnfw/raw/main/docs/artigo_nfw.pdf" target="_blank">
+    <img src="https://img.shields.io/badge/Download%20Paper-0073e6?style=for-the-badge&logo=read-the-docs&logoColor=white" alt="Download PDF Paper">
+  </a>
+</p>
 
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![NumPy](https://img.shields.io/badge/numpy-≥1.24-blue)](https://numpy.org/)
-[![SciPy](https://img.shields.io/badge/scipy-≥1.10-blue)](https://scipy.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
----
-
-## 📖 Descrição
-
-Este código implementa um pipeline completo para correção do **viés de suavização numérica** que afeta resolvedores de Poisson via FFT com deposição Cloud‑in‑Cell (CIC) quando aplicados a perfis de cúspide \( \rho \propto r^{-1} \) (NFW e Hernquist). O viés “apaga” galáxias limítrofes, subestimando a profundidade do poço de potencial e alterando a classificação estelar/escura segundo o critério de Nadler (2025).
-
-A correção é feita por um **corretor PCHIP 2D** calibrado no perfil NFW e posteriormente testado em Hernquist para demonstrar transferabilidade. O pipeline gera figuras de nível de publicação e uma tabela CSV de auditoria com 21 colunas por halo.
-
----
-
-## 🎯 Objetivo Científico
-
-- Corrigir a suavização numérica da cúspide central em resolvedores de Poisson via FFT/CIC.
-- Demonstrar que a correção PCHIP radial no espaço real é robusta para qualquer perfil de cúspide \( r^{-1} \) (NFW e Hernquist).
-- Validar a correção com o **Critério de Nadler (2025)**, que classifica halos como estelares ou escuros com base em:
-  - Score de profundidade \( |\Phi(R_\text{eval})| / |\Phi_\text{ref}| > 0.85 \)
-  - \( V_\text{max} > 12 \, \text{km/s} \)
+This repository hosts the complete computational pipeline, datasets, and high-resolution diagnostic figures for correcting the systematic central potential smoothing in Navarro-Frenk-White (NFW) dark matter mini-halos ($M \le 10^8 M_\odot$) caused by Cloud-in-Cell (CIC) density deposition on discrete Cartesian grids solved via Fast Fourier Transform (FFT) Poisson solvers [3, 4].
 
 ---
 
-## 🔬 Metodologia
+## 🌌 Scientific Context & Background
 
-O pipeline executa **10 etapas** principais:
+In the standard $\Lambda$CDM cosmological model, dark matter mini-halos form the primary potential wells necessary to trap primordial gas, acting as the birthplaces for Population III stars [4, 5]. Under the **Nadler et al. (2025)** criterion, a halo's capacity to form a galaxy is determined by the physical depth of its central potential [3, 4].
 
-1. **Validação analítica** dos perfis NFW e Hernquist (potencial, densidade, massa acumulada).
-2. **Smoke test** do solver CIC‑FFT com resolução reduzida.
-3. **Mapeamento do erro radial** \( \varepsilon(r,c) \) – média sobre 100 translações aleatórias para 5 concentrações.
-4. **Construção do CorretorPCHIP 2D** interpolação monotônica em \( r \) e \( c \).
-5. **Validação cruzada** NFW: compara \( N_\text{ref} \) vs \( N_\text{cal} \) vs \( N_\text{cal}+\text{PCHIP} \).
-6. **Teste de sensibilidade** aplicando o corretor (calibrado em NFW) ao perfil de Hernquist.
-7. **Monte Carlo** com 100 halos na zona de transição \( [10^7, 10^{8.5}] \, M_\odot \), com amostragem estratificada para garantir halos estelares.
-8. **Fração de Ocupação de Galáxias** \( f_\text{occ}(V_\text{max}) \) – curva logística.
-9. **Geração de figuras** científicas (diagnóstico, “punch”, f_occ, Hernquist).
-10. **Exportação de CSV de auditoria** com 21 colunas por halo.
+However, Cartesian spatial discretization acts as a low-pass filter, artificially smoothing the cuspy central density of NFW profiles ($\rho \propto r^{-1}$), shallowing the potential well by over **30%** at moderate grid resolutions [3]. This systematic numerical bias artificially extinguishes physical star formation in simulations [3, 4]. 
+
+Our study develops a **2D spectral transfer function** binned in radius and concentration, interpolated via **Piecewise Cubic Hermite Interpolating Polynomials (PCHIP)**, which successfully restores the physical potential wells of NFW halos with **98.9%** systematic error mitigation [6].
+
+<p align="center">
+  <img src="figures/fig2_punch_gold_v2.png" width="85%" alt="Physical Stellar Recovery Scatter Plot">
+  <br>
+  <em>Figure 1: The "Punch" – Restoring 100% of star-forming halos from numerical erasure (recovering 27 out of 27 false darks) [6, 7].</em>
+</p>
 
 ---
 
-## 🛠️ Requisitos
+## 🛠️ Reproducibility & How to Run the Code
 
-- Python 3.9 ou superior
-- Bibliotecas:
-  - `numpy`
-  - `scipy` (interpolação, otimização)
-  - `matplotlib`
-  - `csv` (embutido)
-  - `datetime`, `os`, `gc`, `warnings`, etc.
+This project is built with python code engineered for full reproducibility. All physical and numerical parameters are fixed via a seed mechanism [2].
 
-Instale as dependências com:
+### 1. Requirements & Dependencies
+The pipeline was developed and verified under **Python 3.12+** (tested up to **3.13.0**) on Linux architectures [2, 8]. It relies on standard scientific libraries:
+* `numpy >= 2.0.0`
+* `scipy`
+* `matplotlib`
 
+You can install all dependencies via pip:
 ```bash
 pip install numpy scipy matplotlib
-```
+2. Execution FlowThe orchestrator in biasnfw.py triggers the complete numerical pipeline via executar_pipeline_completo()3:Calibration: Runs systematic random sub-voxel grid-phase translations to map the NFW spectral bias $\epsilon(r,c)$3lock.Corrector Interpolation: Initializes the 2D PCHIP spectral corrector3.Validation & Auditing: Performs blind cross-validation on an independent grid ($N=64$ vs $N=128$), runs the Hernquist profile transferability test, conducts $M_{\text{sub}}$ subvoxel convergence sweeps, box size sensitivity, and CPU scaling audits3.Monte Carlo Population: Generates a cosmologically physical population of 169 halos to evaluate the Nadler et al. classification threshold34.Observational Inference: Fits the galaxy occupation fraction ($f_{\text{occ}}$) sigmoid curves to compare analytical, uncorrected, and corrected populationslock5.3. Running the PipelineTo run the full simulation locally and export all data and figures, execute:python3 biasnfw.py
+Note: The execution time is highly dependent on the grid resolution and subvoxel sampling. A full reference run with $N=128$ and $M_{\text{sub}}=8$ takes approximately 230 minutes of CPU on a 12-core AMD64 processor2.📊 Core Datasets (Data Audit)The pipeline automatically exports two comprehensive data audit files in the data/ folder67:resultados_mc_gold.csv: Contains 169 halos with 21 columns mapping physical properties (mass, concentration, $V_{\text{max}}$), analytical vs. numerical potentials, Nadler scores, and classification flags89. This sheet proves that PCHIP correction restores classification accuracy from 84% to 100%10.robustez_suplementar.csv: Contains raw logs for:CIC Subvoxel Convergence: Showing saturation at $M_{\text{sub}} \ge 8$ (512 subvoxels)11.Periodic Box Sensitivity: Revealing error explosion up to 82.69% due to physical resolution loss12.Reference concentration ($c_{\text{ref}}$) vulnerability: Quantifying the classification flip of a fixed physical halo ($c=8$) under different normalization choices1314.Performance Projections: Modeling the CPU execution time scaling with an empirical exponent of $p = 3.10$15.📚 Cite this WorkIf you use this spectral corrector, datasets, or methodology in your cosmological research, please cite our repository:@software{silva_ferreira_2026_biasnfw,
+  author = {Silva Ferreira, Jonatas Vitorio},
+  title = {Biasnfw: Correcting Numerical Central Cusp Bias in NFW Dark Matter Halos},
+  year = {2026},
+  publisher = {GitHub},
+  journal = {GitHub Repository},
+  howpublished = {\url{https://github.com/vetorio/Biasnfw}}
+}
 
----
-
-## 🚀 Como Executar
-
-Clone o repositório e execute o script:
-
-```bash
-python biasnfw.py
-```
-
-### Parâmetros de Execução (dentro da função `main()`)
-
-| Modo          | `N_MAP` | `N_TRANS` | `M_SUB` | `N_HALOS` | Tempo estimado |
-|---------------|---------|-----------|---------|-----------|----------------|
-| **Dev** (rápido) | 64      | 10        | 4       | 30        | ~10 min        |
-| **Publicação**   | 128     | 100       | 8       | 100       | ~3–6 h (CPU)   |
-
-Ajuste os valores no início da função `main()` conforme sua necessidade.
-
----
-
-## 📁 Saídas Geradas
-
-Após a execução, os seguintes arquivos serão criados no diretório atual:
-
-- `fig1_diagnostico_gold.png` – Diagnóstico 6‑painéis (perfis, viés, validação, scatter, tabela de confusão).
-- `fig2_punch_gold.png` – “The Punch” aprimorado com zona de recuperação física e setas de correção.
-- `fig3_focc_gold.png` – Fração de Ocupação de Galáxias (curvas logísticas).
-- `fig4_hernquist_gold.png` – Teste de sensibilidade Hernquist (transferabilidade do corretor).
-- `resultados_mc_gold.csv` – Tabela de auditoria com 21 colunas por halo (inclui logM, c, Vvir, Vmax, scores, classificações, flags de recuperação e estrato).
-- `robustez_suplementar.csv` – Estudos de convergência M_sub, sensibilidade L_caixa, sensibilidade Φ_ref e projeção de escalabilidade N=256.
-
----
-
-## 🧬 Estrutura do Código
-
-O código é organizado em seções (cada uma com documentação extensa):
-
-- **§ A** – Constantes globais (cosmologia, critérios, paleta)
-- **§ B** – Perfis analíticos (NFW e Hernquist) com potencial, densidade e massa
-- **§ C** – Deposição CIC (loop iterativo com sub‑voxels)
-- **§ D** – Solver de Poisson via FFT (com shift de referência)
-- **§ E** – Pipeline CIC → FFT
-- **§ F** – Mapeamento do erro radial com bootstrap (intervalos de confiança)
-- **§ G** – Corretor PCHIP 2D
-- **§ H** – Validação cruzada NFW
-- **§ I** – Teste de sensibilidade Hernquist
-- **§ I2** – Estudos adicionais de robustez (convergência M_sub, L_box, Φ_ref, escalabilidade)
-- **§ J** – Critério de Nadler (2025)
-- **§ K** – Monte Carlo (com amostragem estratificada)
-- **§ L** – Fração de ocupação de galáxias
-- **§ M** – Exportação CSV (21 colunas)
-- **§ N–R** – Geração das figuras
-- **§ S** – Pipeline principal `main()`
-
----
-
-## 📊 Exemplo de Resultados
-
-Para a configuração de **publicação** (N_MAP=128, N_TRANS=100, N_HALOS=100), espera‑se:
-
-- Redução do erro médio de ~13‑20% para **< 0.5%** (em r_eval).
-- Acurácia de classificação > 98% após correção.
-- Recuperação de **100% dos falsos escuros** (halos que seriam erroneamente classificados como escuros pelo solver numérico).
-- Deslocamento da curva \( f_\text{occ} \) corrigido para \( V_{50} \approx 12 \, \text{km/s} \).
-
----
-
-## 📚 Referências Científicas
-
-1. Łokas & Mamon (2001). *MNRAS* **321**, 155. – Potencial NFW analítico.
-2. Navarro, Frenk & White (1997). *ApJ* **490**, 493. – Perfil NFW.
-3. Nadler et al. (2025). *ApJ* [in press]. – Critério dual V_max + score.
-4. Hockney & Eastwood (1988). *CRC Press*. – CIC + FFT de Poisson.
-5. Fritsch & Carlson (1980). *SIAM J. Numer. Anal.* **17**. – PCHIP monótono.
-6. Hernquist (1990). *ApJ* **356**, 359. – Perfil de Hernquist.
-7. Vale & Ostriker (2004). *MNRAS* **353**, 189. – Função de ocupação de halos.
-
----
-
-## 🤝 Como Contribuir
-
-Este projeto é voltado para pesquisa acadêmica. Sugestões, relatórios de bugs e pull requests são bem‑vindos. Para dúvidas, entre em contato.
-
-
-
-## ✍️ Autores
-
-Jonatas Vitório
-
-*Última atualização: 2026*
