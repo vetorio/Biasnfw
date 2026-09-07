@@ -1,12 +1,12 @@
 # Correcting Numerical Central Cusp Bias in NFW Dark Matter Halos
 
-This repository hosts the complete computational pipeline, datasets, and high-resolution diagnostic figures for correcting the systematic central potential smoothing in Navarro-Frenk-White (NFW) dark matter mini-halos ($M \le 10^8 M_\odot$) caused by Cloud-in-Cell (CIC) density deposition on discrete Cartesian grids solved via Fast Fourier Transform (FFT) Poisson solvers [3, 4].
+This repository hosts the complete computational pipeline, datasets, and high-resolution diagnostic figures for correcting the systematic central potential smoothing in Navarro-Frenk-White (NFW) dark matter mini-halos ($M \le 10^8 M_\odot$) caused by Cloud-in-Cell (CIC) density deposition on discrete Cartesian grids solved via Fast Fourier Transform (FFT) Poisson solvers.
 
 ---
 
 ## 🌌 Scientific Context & Background
 
-In the standard $\Lambda$CDM cosmological model, dark matter mini-halos form the primary potential wells necessary to trap primordial gas, acting as the birthplaces for Population III stars [4, 5]. Under the **Nadler et al. (2025)** criterion, a halo's capacity to form a galaxy is determined by the physical depth of its central potential [3, 4].
+In the standard $\Lambda$ CDM cosmological model, dark matter mini-halos form the primary potential wells necessary to trap primordial gas, acting as the birthplaces for Population III stars. Under the **Nadler et al. (2025)** criterion, a halo's capacity to form a galaxy is determined by the physical depth of its central potential [3, 4].
 
 However, Cartesian spatial discretization acts as a low-pass filter, artificially smoothing the cuspy central density of NFW profiles ($\rho \propto r^{-1}$), shallowing the potential well by over **30%** at moderate grid resolutions [3]. This systematic numerical bias artificially extinguishes physical star formation in simulations [3, 4]. 
 
@@ -15,14 +15,14 @@ Our study develops a **2D spectral transfer function** binned in radius and conc
 <p align="center">
   <img src="figures/fig2_punch_gold_v2.png" width="85%" alt="Physical Stellar Recovery Scatter Plot">
   <br>
-  <em>Figure 1: The "Punch" – Restoring 100% of star-forming halos from numerical erasure (recovering 27 out of 27 false darks) [6, 7].</em>
+  <em>Figure 1: The "Punch" – Restoring 100% of star-forming halos from numerical erasure (recovering 27 out of 27 false darks).</em>
 </p>
 
 ---
 
 ## 🛠️ Reproducibility & How to Run the Code
 
-This project is built with python code engineered for full reproducibility. All physical and numerical parameters are fixed via a seed mechanism [2].
+This project is built with python code engineered for full reproducibility. All physical and numerical parameters are fixed via a seed mechanism.
 
 ### 1. Requirements & Dependencies
 The pipeline was developed and verified under **Python 3.12+** (tested up to **3.13.0**) on Linux architectures [2, 8]. It relies on standard scientific libraries:
