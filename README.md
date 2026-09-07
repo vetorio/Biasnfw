@@ -54,7 +54,54 @@ python -m venv venv
 
 # 3. Install core dependencies
 pip install "numpy>=2.0.0" scipy matplotlib
+```
 
-### 🛠️ Pipeline Architecture & Execution
+---
 
-FlowThe core orchestrator script biasnfw.py triggers the complete numerical pipeline via executar_pipeline_completo() across six automated stages:Calibration: Maps the spectral bias $\epsilon(r,c)$ using systematic random sub-voxel grid-phase translations.Corrector Interpolation: Initializes the 2D PCHIP spectral transfer function matrix.Validation & Auditing: Performs blind cross-validation ($N=64$ vs $N=128$), Hernquist transferability testing, sub-voxel convergence sweeps ($M_{\text{sub}}$), box-size sensitivity, and CPU scaling audits.Monte Carlo Population: Generates a physical population of 169 halos to evaluate classification thresholds.Observational Inference: Fits galaxy occupation fraction ($f_{\text{occ}}$) sigmoids comparing analytical, uncorrected, and corrected states.
+## 🛠️ Pipeline Architecture & Execution Flow
+
+The core orchestrator script `biasnfw.py` triggers the complete numerical pipeline via `executar_pipeline_completo()` across six automated stages:
+
+* **Calibration:** Maps the spectral bias $\epsilon(r,c)$ using systematic random sub-voxel grid-phase translations.
+* **Corrector Interpolation:** Initializes the 2D PCHIP spectral transfer function matrix.
+* **Validation & Auditing:** Performs blind cross-validation ($N=64$ vs $N=128$), Hernquist transferability testing, sub-voxel convergence sweeps ($M_{\text{sub}}$), box-size sensitivity, and CPU scaling audits.
+* **Monte Carlo Population:** Generates a physical population of 169 halos to evaluate classification thresholds.
+* **Observational Inference:** Fits galaxy occupation fraction ($f_{\text{occ}}$) sigmoids comparing analytical, uncorrected, and corrected states.
+
+### Running the Full Simulation
+
+Execute the orchestrator script to run the pipeline and output figures and audit tables:
+
+```bash
+python3 biasnfw.py
+```
+
+> **Execution Note:** CPU time depends on grid resolution and sub-voxel sampling. A reference run ($N=128$, $M_{\text{sub}}=8$) takes ~230 CPU minutes on a 12-core AMD64 processor.
+
+---
+
+## 📊 Core Datasets (Data Audit)
+
+All pipeline executions automatically output structured logs and processed data to the `data/` directory:
+
+| Dataset File | Primary Contents | Key Outcome / Proof |
+| :--- | :--- | :--- |
+| `data/resultados_mc_gold.csv` | 169 halos across 21 columns (mass, concentration, $V_{\text{max}}$, analytical vs. numerical potentials, Nadler scores) | Demonstrates PCHIP correction restores halo classification accuracy from **84% to 100%**. |
+| `data/robustez_suplementar.csv` | Raw logs covering sub-voxel sweeps, periodic box shifts, reference concentration ($c_{\text{ref}}$) sensitivity, and timing benchmarks | Confirms saturation at $M_{\text{sub}} \ge 8$ and quantifies runtime scaling ($p = 3.10$). |
+
+---
+
+## 📚 Citation
+
+If you utilize this spectral corrector, methodology, or generated dataset in your research, please cite this work as follows:
+
+```bibtex
+@software{silva_ferreira_2026_biasnfw,
+  author       = {Silva Ferreira, Jonatas Vitorio},
+  title        = {Biasnfw: Correcting Numerical Central Cusp Bias in NFW Dark Matter Halos},
+  year         = {2026},
+  publisher    = {GitHub},
+  journal      = {GitHub Repository},
+  howpublished = {\url{[https://github.com/vetorio/Biasnfw](https://github.com/vetorio/Biasnfw)}}
+}
+```
